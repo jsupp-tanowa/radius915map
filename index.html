@@ -157,6 +157,64 @@ box-shadow:
   color:#666;
 }
 
+/* 下カード */
+
+.bottom-sheet{
+
+position:absolute;
+
+left:10px;
+right:10px;
+bottom:80px;
+
+background:white;
+
+border-radius:20px 20px 0 0;
+
+padding:16px;
+
+z-index:999;
+
+box-shadow:
+0 -2px 15px rgba(0,0,0,.2);
+
+display:none;
+
+}
+
+.bottom-title{
+
+font-size:20px;
+font-weight:bold;
+
+}
+
+.bottom-info{
+
+margin-top:8px;
+
+color:#666;
+
+}
+
+.detail-btn{
+
+margin-top:12px;
+
+width:100%;
+
+background:#2d6cdf;
+
+color:white;
+
+border:none;
+
+padding:12px;
+
+border-radius:12px;
+
+}
+
 .tab-item:active{
   transform:scale(.95);
 }
@@ -193,6 +251,37 @@ placeholder="店名・クラブ・ジャンル検索">
 </div>
 
 <div id="map"></div>
+
+<div id="map"></div>
+
+<div
+id="shopCard"
+class="bottom-sheet">
+
+<div
+class="bottom-title"
+id="shopName">
+
+店名
+
+</div>
+
+<div
+class="bottom-info"
+id="shopInfo">
+
+説明
+
+</div>
+
+<button
+class="detail-btn">
+
+詳細を見る
+
+</button>
+
+</div>
 
 <div class="tab-bar">
 
@@ -424,16 +513,31 @@ function loadShops(){
       });
 
 
-      marker.addListener(
-        "click",
-        ()=>{
-          infoWindow.open(
-            map,
-            marker
-          );
-        }
-      );
+marker.addListener(
+"click",
+()=>{
 
+document.getElementById(
+"shopCard"
+).style.display="block";
+
+document.getElementById(
+"shopName"
+).innerText=
+shop.name;
+
+document.getElementById(
+"shopInfo"
+).innerHTML=
+
+shop.team+
+"<br>"+
+(shop.genre||"")+
+"<br>"+
+(shop.note||"");
+
+}
+);
     });
 
 
