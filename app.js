@@ -259,7 +259,7 @@ shop.image ||
 
 /* 地図初期化 */
 
-window.initMap = function(){
+function initMap(){
 
   map = new google.maps.Map(
     document.getElementById("map"),
@@ -271,6 +271,45 @@ window.initMap = function(){
       zoom:16
     }
   );
+
+  loadShops();
+
+  const card =
+  document.getElementById("shopCard");
+
+  let startY=0;
+
+  card.addEventListener(
+    "touchstart",
+    e=>{
+      startY=e.touches[0].clientY;
+    }
+  );
+
+  card.addEventListener(
+    "touchmove",
+    e=>{
+
+      e.preventDefault();
+
+      const moveY=
+      e.touches[0].clientY;
+
+      const diff=
+      startY-moveY;
+
+      if(diff>50){
+        card.classList.add("open");
+      }
+
+      if(diff<-50){
+        card.classList.remove("open");
+      }
+
+    }
+  );
+
+}
 
   loadShops();
 
