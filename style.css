@@ -247,19 +247,13 @@ color:#555;
 
 .detail-btn{
 
+position:sticky;
+
+bottom:0;
+
 margin-top:12px;
 
 width:100%;
-
-background:#2d6cdf;
-
-color:white;
-
-border:none;
-
-padding:12px;
-
-border-radius:12px;
 
 }
 
