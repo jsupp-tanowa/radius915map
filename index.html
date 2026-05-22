@@ -178,10 +178,40 @@ z-index:999;
 box-shadow:
 0 -2px 15px rgba(0,0,0,.2);
 
-display:none;
+height:120px;
+
+overflow:hidden;
+
+transition:.3s;
+
+touch-action:none;
 
 }
 
+/* 開いた状態 */
+
+.bottom-sheet.open{
+
+height:55vh;
+
+}
+
+/* 取っ手 */
+
+.drag-handle{
+
+width:50px;
+
+height:6px;
+
+background:#ccc;
+
+border-radius:20px;
+
+margin:auto;
+margin-bottom:10px;
+
+}
 .bottom-title{
 
 font-size:20px;
@@ -252,11 +282,12 @@ placeholder="店名・クラブ・ジャンル検索">
 
 <div id="map"></div>
 
-<div id="map"></div>
-
 <div
 id="shopCard"
-class="bottom-sheet">
+class="bottom-sheet"
+style="display:none;">
+
+<div class="drag-handle"></div>
 
 <div
 class="bottom-title"
@@ -282,7 +313,6 @@ class="detail-btn">
 </button>
 
 </div>
-
 <div class="tab-bar">
 
 <div class="tab-item">
@@ -586,10 +616,56 @@ window.initMap=function(){
 
   loadShops();
 
+const card=
+document.getElementById(
+"shopCard"
+);
+
+let startY=0;
+
+card.addEventListener(
+"touchstart",
+e=>{
+
+startY=
+e.touches[0].clientY;
+
+}
+);
+
+card.addEventListener(
+"touchmove",
+e=>{
+
+e.preventDefault();
+  
+const moveY=
+e.touches[0].clientY;
+
+const diff=
+startY-moveY;
+
+if(diff>50){
+
+card.classList.add(
+"open"
+);
+
+}
+
+if(diff<-50){
+
+card.classList.remove(
+"open"
+);
+
+}
+
+}
+);
 };
-
+  
 </script>
-
 
 <script
 async
