@@ -1,5 +1,3 @@
-<script>
-
 /* Firebase */
 
 const firebaseConfig = {
@@ -321,6 +319,3 @@ window.initMap = function(){
   );
 
 };
-  
-</script>
-
