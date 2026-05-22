@@ -261,73 +261,65 @@ shop.image ||
 
 /* 地図初期化 */
 
-window.initMap=function(){
+window.initMap = function(){
 
-  map=
-  new google.maps.Map(
-
+  map = new google.maps.Map(
     document.getElementById("map"),
-
     {
       center:{
         lat:34.7284,
         lng:135.4814
       },
-
       zoom:16
     }
-
   );
 
   loadShops();
 
-const card=
-document.getElementById(
-"shopCard"
-);
+  const card =
+  document.getElementById(
+    "shopCard"
+  );
 
-let startY=0;
+  let startY=0;
 
-card.addEventListener(
-"touchstart",
-e=>{
+  card.addEventListener(
+    "touchstart",
+    e=>{
 
-startY=
-e.touches[0].clientY;
+      startY=
+      e.touches[0].clientY;
 
-}
-);
+    }
+  );
 
-card.addEventListener(
-"touchmove",
-e=>{
+  card.addEventListener(
+    "touchmove",
+    e=>{
 
-e.preventDefault();
-  
-const moveY=
-e.touches[0].clientY;
+      e.preventDefault();
 
-const diff=
-startY-moveY;
+      const moveY=
+      e.touches[0].clientY;
 
-if(diff>50){
+      const diff=
+      startY-moveY;
 
-card.classList.add(
-"open"
-);
+      if(diff>50){
+        card.classList.add(
+          "open"
+        );
+      }
 
-}
+      if(diff<-50){
+        card.classList.remove(
+          "open"
+        );
+      }
 
-if(diff<-50){
+    }
+  );
 
-card.classList.remove(
-"open"
-);
-
-}
-
-}
-);
 };
   
 </script>
