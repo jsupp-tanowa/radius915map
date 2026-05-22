@@ -145,8 +145,16 @@ box-shadow:
 
 .tab-item{
   text-align:center;
-  font-size:14px;
-  color:#666;
+  font-size:13px;
+  color:#444;
+
+  font-family:
+  "Noto Sans JP",
+  sans-serif;
+
+  font-weight:700;
+
+  letter-spacing:1px;
 }
 
 /* 下カード */
