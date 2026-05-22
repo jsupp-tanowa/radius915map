@@ -259,7 +259,7 @@ shop.image ||
 
 /* 地図初期化 */
 
-function initMap(){
+window.initMap = function(){
 
   map = new google.maps.Map(
     document.getElementById("map"),
@@ -276,6 +276,8 @@ function initMap(){
 
   const card =
   document.getElementById("shopCard");
+
+  if(!card) return;
 
   let startY=0;
 
@@ -309,6 +311,4 @@ function initMap(){
     }
   );
 
-}
-
-window.initMap = initMap;
+};
