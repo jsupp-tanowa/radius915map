@@ -210,18 +210,38 @@ margin:auto;
 margin-bottom:10px;
 
 }
+
 .bottom-title{
 
-font-size:20px;
-font-weight:bold;
+font-size:24px;
+
+font-family:
+"Noto Sans JP",
+sans-serif;
+
+font-weight:800;
+
+letter-spacing:0.5px;
+
+color:#222;
 
 }
 
 .bottom-info{
 
-margin-top:8px;
+margin-top:10px;
 
-color:#666;
+font-size:16px;
+
+line-height:1.8;
+
+font-family:
+"Noto Sans JP",
+sans-serif;
+
+font-weight:500;
+
+color:#555;
 
 }
 
