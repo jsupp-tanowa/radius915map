@@ -273,9 +273,6 @@ function initMap(){
   );
 
   loadShops();
-}
-
-window.initMap = initMap;
 
   const card =
   document.getElementById("shopCard");
@@ -313,3 +310,5 @@ window.initMap = initMap;
   );
 
 }
+
+window.initMap = initMap;
