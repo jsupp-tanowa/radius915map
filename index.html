@@ -249,6 +249,22 @@ border-radius:12px;
   transform:scale(.95);
 }
 
+.shop-image{
+
+width:100%;
+
+height:140px;
+
+object-fit:cover;
+
+border-radius:12px;
+
+margin-bottom:10px;
+
+background:#eee;
+
+}
+
 </style>
 
 </head>
@@ -289,30 +305,31 @@ style="display:none;">
 
 <div class="drag-handle"></div>
 
+<img
+id="shopImage"
+class="shop-image"
+src=""
+>
+
 <div
 class="bottom-title"
 id="shopName">
-
 店名
-
 </div>
 
 <div
 class="bottom-info"
 id="shopInfo">
-
 説明
-
 </div>
 
 <button
 class="detail-btn">
-
 詳細を見る
-
 </button>
 
 </div>
+  
 <div class="tab-bar">
 
 <div class="tab-item">
@@ -560,11 +577,18 @@ document.getElementById(
 "shopInfo"
 ).innerHTML=
 
-shop.team+
+"応援: "+shop.team+
 "<br>"+
-(shop.genre||"")+
+"ジャンル: "+(shop.genre||"")+
 "<br>"+
 (shop.note||"");
+
+document.getElementById(
+"shopImage"
+).src=
+
+shop.image ||
+"https://picsum.photos/600/300";
 
 }
 );
