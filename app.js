@@ -208,4 +208,28 @@ window.initMap = function () {
 
     markers.push(marker);
   }
+  document.getElementById("searchInput").addEventListener("input", e => {
+  const keyword = e.target.value.trim();
+
+  // マーカーを全部消す
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+
+  // キーワードが空 → 全部表示
+  if (keyword === "") {
+    allShops.forEach(shop => createMarker(shop));
+    return;
+  }
+
+  // フィルタ
+  const filtered = allShops.filter(shop =>
+    (shop.name && shop.name.includes(keyword)) ||
+    (shop.team && shop.team.includes(keyword)) ||
+    (shop.genre && shop.genre.includes(keyword)) ||
+    (shop.note && shop.note.includes(keyword))
+  );
+
+  // 該当店舗だけ表示
+  filtered.forEach(shop => createMarker(shop));
+});
 };
