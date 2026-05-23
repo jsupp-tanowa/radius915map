@@ -164,4 +164,48 @@ window.initMap = function () {
       }, 300);
     }
   });
+  let allShops = [];   // 全店舗データを保持
+  let markers = [];    // 現在表示中のマーカー
+  
+  function loadShops() {
+    db.collection("shops").get().then(snapshot => {
+      allShops = [];  // 初期化
+      markers.forEach(m => m.setMap(null)); // 既存マーカー削除
+      markers = [];
+
+      snapshot.forEach(doc => {
+        const shop = doc.data();
+        allShops.push(shop);
+        createMarker(shop);
+      });
+    });
+  }
+
+  function createMarker(shop) {
+    const marker = new google.maps.Marker({
+      position: { lat: shop.lat, lng: shop.lng },
+      map: map,
+      title: shop.name
+    });
+
+    marker.addListener("click", () => {
+      const card = document.getElementById("shopCard");
+      card.style.display = "block";
+
+      document.getElementById("shopName").innerText = shop.name;
+      document.getElementById("shopInfo").innerHTML =
+        `応援: ${shop.team}<br>` +
+        `ジャンル: ${shop.genre || ""}<br>` +
+        `${shop.note || ""}`;
+      document.getElementById("shopImage").src =
+        shop.image || "https://picsum.photos/600/300";
+
+      document.querySelector(".detail-btn").onclick = () => {
+        const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
+       window.open(googleMapLink, "_blank");
+      };
+    });
+
+    markers.push(marker);
+  }
 };
