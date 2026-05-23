@@ -1,121 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;800&display=swap" rel="stylesheet">
 
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700&display=swap"
-rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700;800&display=swap"
-rel="stylesheet">
-
-<title>サポたのわ</title>
-
-<link rel="stylesheet" href="style.css">
+  <title>サポたのわ</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="search-bar">
+  <!-- 検索バー -->
+  <div class="search-bar">
+    <input type="text" placeholder="店名・クラブ・ジャンル検索">
+  </div>
 
-<input
-type="text"
-placeholder="店名・クラブ・ジャンル検索">
+  <!-- フィルター -->
+  <div class="filter-area">
+    <button>ごはんや</button>
+    <button>居酒屋</button>
+    <button>バー</button>
+  </div>
 
-</div>
+  <!-- 現在地ボタン -->
+  <div class="button-area">
+    <button onclick="moveToCurrentLocation()">現在地</button>
+  </div>
 
+  <!-- 地図 -->
+  <div id="map"></div>
 
-<div class="filter-area">
+  <!-- 店舗カード -->
+  <div id="shopCard" class="bottom-sheet" style="display:none;">
+    <div class="drag-handle"></div>
+    <img id="shopImage" class="shop-image" src="">
+    <div id="shopName" class="bottom-title">店名</div>
+    <div id="shopInfo" class="bottom-info">説明</div>
+    <button class="detail-btn">詳細を見る</button>
+  </div>
 
-<button>ごはんや</button>
+  <!-- 下タブ -->
+  <div class="tab-bar">
+    <div class="tab-item">🗺️<br>地図</div>
+    <div class="tab-item">🔍<br>検索</div>
+    <div class="tab-item">⭐<br>保存</div>
+    <div class="tab-item">⚙<br>設定</div>
+  </div>
 
-<button>居酒屋</button>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<button>バー</button>
+  <!-- アプリ本体 -->
+  <script src="app.js"></script>
 
-</div>
-
-<div class="button-area">
-  <button onclick="moveToCurrentLocation()">
-    現在地
-  </button>
-</div>
-
-<div id="map"></div>
-
-<div
-id="shopCard"
-class="bottom-sheet"
-style="display:none;">
-
-<div class="drag-handle"></div>
-
-<img
-id="shopImage"
-class="shop-image"
-src=""
->
-
-<div
-class="bottom-title"
-id="shopName">
-店名
-</div>
-
-<div
-class="bottom-info"
-id="shopInfo">
-説明
-</div>
-
-<button
-class="detail-btn">
-詳細を見る
-</button>
-
-</div>
-  
-<div class="tab-bar">
-
-<div class="tab-item">
-🗺️<br>
-地図
-</div>
-
-<div class="tab-item">
-🔍<br>
-検索
-</div>
-
-<div class="tab-item">
-⭐<br>
-保存
-</div>
-
-<div class="tab-item">
-⚙<br>
-設定
-</div>
-
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<script src="app.js"></script>
-
-<script async
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDq01peBIq6PC5ESeSG5t2CipVBUCC1WF4&callback=initMap">
-</script>
+  <!-- Google Maps -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDq01peBIq6PC5ESeSG5t2CipVBUCC1WF4&callback=initMap"></script>
 
 </body>
 </html>
