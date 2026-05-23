@@ -49,148 +49,103 @@ function moveToCurrentLocation() {
   );
 }
 
-/* 距離計算 */
-function getDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng / 2) ** 2;
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-/* 店舗読込 */
-function loadShops() {
-  db.collection("shops").get().then(snapshot => {
-    const bounds = new google.maps.LatLngBounds();
-
-    snapshot.forEach(doc => {
-      const shop = doc.data();
-      createMarker(shop);
-      allShops.push(shop);
-      
-      let distanceText = "";
-      if (userLocation) {
-        const distance = getDistance(
-          userLocation.lat,
-          userLocation.lng,
-          Number(shop.lat),
-          Number(shop.lng)
-        );
-        distanceText = `距離: ${distance.toFixed(2)} km<br>`;
-      }
-
-      const iconColor = shop.away
-        ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
-
-      const marker = new google.maps.Marker({
-        position: { lat: Number(shop.lat), lng: Number(shop.lng) },
-        map: map,
-        title: shop.name,
-        icon: iconColor
-      });
-
-      bounds.extend(marker.getPosition());
-
-      marker.addListener("click", () => {
-        document.getElementById("shopCard").style.display = "block";
-        document.getElementById("shopName").innerText = shop.name;
-        document.getElementById("shopInfo").innerHTML =
-          `応援: ${shop.team}<br>` +
-          `ジャンル: ${shop.genre || ""}<br>` +
-          `${shop.note || ""}`;
-        document.getElementById("shopImage").src =
-          shop.image || "https://picsum.photos/600/300";
-        // ★ 詳細を見るボタンの動作を設定
-　　　  document.querySelector(".detail-btn").onclick = () => {
-    　　　const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
-    　　　window.open(googleMapLink, "_blank");
-  　　　};
-      });
-    });
-
-    if (!snapshot.empty) {
-      map.fitBounds(bounds);
-      google.maps.event.addListenerOnce(map, "bounds_changed", () => {
-        if (map.getZoom() > 14) map.setZoom(14);
-      });
-    }
-  });
-}
-
-/* クローズ処理 */
-document.getElementById("closeCardBtn").addEventListener("click", () => {
-  const card = document.getElementById("shopCard");
-  card.classList.remove("open");
-  card.style.display = "none";
-});
-
 /* 地図初期化 */
 window.initMap = function () {
+
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 34.7284, lng: 135.4814 },
     zoom: 16
   });
-  
+
   let allShops = [];
   let markers = [];
-  
-  loadShops();
 
-  /* bottom-sheet スワイプ */
-  const card = document.getElementById("shopCard");
-  let startY = 0;
+  /* マーカー作成 */
+  function createMarker(shop) {
+    const marker = new google.maps.Marker({
+      position: { lat: Number(shop.lat), lng: Number(shop.lng) },
+      map: map,
+      title: shop.name,
+      icon: shop.away
+        ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+        : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+    });
 
-  card.addEventListener("touchstart", e => {
-    startY = e.touches[0].clientY;
-  });
+    marker.addListener("click", () => {
+      const card = document.getElementById("shopCard");
+      card.style.display = "block";
 
-  card.addEventListener("touchend", e => {
-    const endY = e.changedTouches[0].clientY;
-    const diff = startY - endY;
+      document.getElementById("shopName").innerText = shop.name;
+      document.getElementById("shopInfo").innerHTML =
+        `応援: ${shop.team}<br>` +
+        `ジャンル: ${shop.genre || ""}<br>` +
+        `${shop.note || ""}`;
+      document.getElementById("shopImage").src =
+        shop.image || "https://picsum.photos/600/300";
 
-    // 上へスワイプ → 開く
-    if (diff > 50) {
-      card.classList.add("open");
-    }
+      document.querySelector(".detail-btn").onclick = () => {
+        const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
+        window.open(googleMapLink, "_blank");
+      };
+    });
 
-    // 下へスワイプ → 閉じる
-    if (diff < -50) {
-      card.classList.remove("open");
-      setTimeout(() => {
-        card.style.display = "none";
-      }, 300);
-    }
-  });
-  document.getElementById("searchInput").addEventListener("input", e => {
-  const keyword = e.target.value.trim();
-
-  // マーカーを全部消す
-  markers.forEach(m => m.setMap(null));
-  markers = [];
-
-  // キーワードが空 → 全部表示
-  if (keyword === "") {
-    allShops.forEach(shop => createMarker(shop));
-    return;
+    markers.push(marker);
   }
 
-  // フィルタ
-  const filtered = allShops.filter(shop =>
-    (shop.name && shop.name.includes(keyword)) ||
-    (shop.team && shop.team.includes(keyword)) ||
-    (shop.genre && shop.genre.includes(keyword)) ||
-    (shop.note && shop.note.includes(keyword))
-  );
+  /* 店舗読込 */
+  function loadShops() {
+    db.collection("shops").get().then(snapshot => {
+      const bounds = new google.maps.LatLngBounds();
 
-  // 該当店舗だけ表示
-  filtered.forEach(shop => createMarker(shop));
-});
+      allShops = [];
+      markers.forEach(m => m.setMap(null));
+      markers = [];
+
+      snapshot.forEach(doc => {
+        const shop = doc.data();
+        allShops.push(shop);
+        createMarker(shop);
+        bounds.extend(new google.maps.LatLng(Number(shop.lat), Number(shop.lng)));
+      });
+
+      if (!snapshot.empty) {
+        map.fitBounds(bounds);
+        google.maps.event.addListenerOnce(map, "bounds_changed", () => {
+          if (map.getZoom() > 14) map.setZoom(14);
+        });
+      }
+    });
+  }
+
+  /* 検索バー */
+  document.getElementById("searchInput").addEventListener("input", e => {
+    const keyword = e.target.value.trim();
+
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+
+    if (keyword === "") {
+      allShops.forEach(shop => createMarker(shop));
+      return;
+    }
+
+    const filtered = allShops.filter(shop =>
+      (shop.name && shop.name.includes(keyword)) ||
+      (shop.team && shop.team.includes(keyword)) ||
+      (shop.genre && shop.genre.includes(keyword)) ||
+      (shop.note && shop.note.includes(keyword))
+    );
+
+    filtered.forEach(shop => createMarker(shop));
+  });
+
+  /* カード閉じる */
+  document.getElementById("closeCardBtn").addEventListener("click", () => {
+    const card = document.getElementById("shopCard");
+    card.classList.remove("open");
+    card.style.display = "none";
+  });
+
+  /* 初回ロード */
+  loadShops();
 };
