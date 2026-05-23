@@ -77,7 +77,7 @@ window.initMap = function () {
 
       document.getElementById("shopName").innerText = shop.name;
       document.getElementById("shopInfo").innerHTML =
-        `応援: ${shop.team}<br>` +
+        `推しクラブ: ${shop.team}<br>` +
         `ジャンル: ${shop.genre || ""}<br>` +
         `${shop.note || ""}`;
       document.getElementById("shopImage").src =
