@@ -131,19 +131,50 @@ window.initMap = function () {
     markers.push(marker);
   }
 
-  function loadShops() {
-    db.collection("shops").get().then(snapshot => {
-      allShops = [];
-      markers.forEach(m => m.setMap(null));
-      markers = [];
+function loadShops() {
+  db.collection("shops").get().then(snapshot => {
+    allShops = [];
+    markers.forEach(m => m.setMap(null));
+    markers = [];
 
-      snapshot.forEach(doc => {
-        const shop = doc.data();
-        allShops.push(shop);
-        createMarker(shop);
-      });
+    snapshot.forEach(doc => {
+      const shop = doc.data();
+      allShops.push(shop);
+      createMarker(shop);
     });
-  }
+
+    // ★ ロード完了後に検索イベントを登録（ここが重要）
+    setupSearch();
+  });
+}
+
+function setupSearch() {
+  const input = document.getElementById("searchInput");
+
+  // すでにイベントが付いている場合は解除
+  input.oninput = null;
+
+  input.addEventListener("input", e => {
+    const keyword = e.target.value.trim();
+
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+
+    if (keyword === "") {
+      allShops.forEach(shop => createMarker(shop));
+      return;
+    }
+
+    const filtered = allShops.filter(shop =>
+      (shop.name && shop.name.includes(keyword)) ||
+      (shop.team && shop.team.includes(keyword)) ||
+      (shop.genre && shop.genre.includes(keyword)) ||
+      (shop.note && shop.note.includes(keyword))
+    );
+
+    filtered.forEach(shop => createMarker(shop));
+  });
+}
 
   /* 検索バー */
   document.getElementById("searchInput").addEventListener("input", e => {
