@@ -63,64 +63,6 @@ function getDistance(lat1, lng1, lat2, lng2) {
   return R * c;
 }
 
-/* 店舗読込 */
-function loadShops() {
-  db.collection("shops").get().then(snapshot => {
-    const bounds = new google.maps.LatLngBounds();
-
-    snapshot.forEach(doc => {
-      const shop = doc.data();
-
-      let distanceText = "";
-      if (userLocation) {
-        const distance = getDistance(
-          userLocation.lat,
-          userLocation.lng,
-          Number(shop.lat),
-          Number(shop.lng)
-        );
-        distanceText = `距離: ${distance.toFixed(2)} km<br>`;
-      }
-
-      const iconColor = shop.away
-        ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png";
-
-      const marker = new google.maps.Marker({
-        position: { lat: Number(shop.lat), lng: Number(shop.lng) },
-        map: map,
-        title: shop.name,
-        icon: iconColor
-      });
-
-      bounds.extend(marker.getPosition());
-
-      marker.addListener("click", () => {
-        document.getElementById("shopCard").style.display = "block";
-        document.getElementById("shopName").innerText = shop.name;
-        document.getElementById("shopInfo").innerHTML =
-          `応援: ${shop.team}<br>` +
-          `ジャンル: ${shop.genre || ""}<br>` +
-          `${shop.note || ""}`;
-        document.getElementById("shopImage").src =
-          shop.image || "https://picsum.photos/600/300";
-        // ★ 詳細を見るボタンの動作を設定
-　　　  document.querySelector(".detail-btn").onclick = () => {
-    　　　const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
-    　　　window.open(googleMapLink, "_blank");
-  　　　};
-      });
-    });
-
-    if (!snapshot.empty) {
-      map.fitBounds(bounds);
-      google.maps.event.addListenerOnce(map, "bounds_changed", () => {
-        if (map.getZoom() > 14) map.setZoom(14);
-      });
-    }
-  });
-}
-
 /* クローズ処理 */
 document.getElementById("closeCardBtn").addEventListener("click", () => {
   const card = document.getElementById("shopCard");
@@ -130,12 +72,11 @@ document.getElementById("closeCardBtn").addEventListener("click", () => {
 
 /* 地図初期化 */
 window.initMap = function () {
+
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 34.7284, lng: 135.4814 },
     zoom: 16
   });
-
-  loadShops();
 
   /* bottom-sheet スワイプ */
   const card = document.getElementById("shopCard");
@@ -149,12 +90,7 @@ window.initMap = function () {
     const endY = e.changedTouches[0].clientY;
     const diff = startY - endY;
 
-    // 上へスワイプ → 開く
-    if (diff > 50) {
-      card.classList.add("open");
-    }
-
-    // 下へスワイプ → 閉じる
+    if (diff > 50) card.classList.add("open");
     if (diff < -50) {
       card.classList.remove("open");
       setTimeout(() => {
@@ -162,32 +98,20 @@ window.initMap = function () {
       }, 300);
     }
   });
-  let allShops = [];   // 全店舗データを保持
-  let markers = [];    // 現在表示中のマーカー
-  
-  function loadShops() {
-    db.collection("shops").get().then(snapshot => {
-      allShops = [];  // 初期化
-      markers.forEach(m => m.setMap(null)); // 既存マーカー削除
-      markers = [];
 
-      snapshot.forEach(doc => {
-        const shop = doc.data();
-        allShops.push(shop);
-        createMarker(shop);
-      });
-    });
-  }
+  /* ▼▼▼ ここから検索対応の正しい構造 ▼▼▼ */
+
+  let allShops = [];
+  let markers = [];
 
   function createMarker(shop) {
     const marker = new google.maps.Marker({
-      position: { lat: shop.lat, lng: shop.lng },
+      position: { lat: Number(shop.lat), lng: Number(shop.lng) },
       map: map,
       title: shop.name
     });
 
     marker.addListener("click", () => {
-      const card = document.getElementById("shopCard");
       card.style.display = "block";
 
       document.getElementById("shopName").innerText = shop.name;
@@ -200,35 +124,49 @@ window.initMap = function () {
 
       document.querySelector(".detail-btn").onclick = () => {
         const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
-       window.open(googleMapLink, "_blank");
+        window.open(googleMapLink, "_blank");
       };
     });
 
     markers.push(marker);
   }
-  document.getElementById("searchInput").addEventListener("input", e => {
-  const keyword = e.target.value.trim();
 
-  // マーカーを全部消す
-  markers.forEach(m => m.setMap(null));
-  markers = [];
+  function loadShops() {
+    db.collection("shops").get().then(snapshot => {
+      allShops = [];
+      markers.forEach(m => m.setMap(null));
+      markers = [];
 
-  // キーワードが空 → 全部表示
-  if (keyword === "") {
-    allShops.forEach(shop => createMarker(shop));
-    return;
+      snapshot.forEach(doc => {
+        const shop = doc.data();
+        allShops.push(shop);
+        createMarker(shop);
+      });
+    });
   }
 
-  // フィルタ
-  const filtered = allShops.filter(shop =>
-    (shop.name && shop.name.includes(keyword)) ||
-    (shop.team && shop.team.includes(keyword)) ||
-    (shop.genre && shop.genre.includes(keyword)) ||
-    (shop.note && shop.note.includes(keyword))
-  );
+  /* 検索バー */
+  document.getElementById("searchInput").addEventListener("input", e => {
+    const keyword = e.target.value.trim();
 
-  // 該当店舗だけ表示
-  filtered.forEach(shop => createMarker(shop));
-});
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+
+    if (keyword === "") {
+      allShops.forEach(shop => createMarker(shop));
+      return;
+    }
+
+    const filtered = allShops.filter(shop =>
+      (shop.name && shop.name.includes(keyword)) ||
+      (shop.team && shop.team.includes(keyword)) ||
+      (shop.genre && shop.genre.includes(keyword)) ||
+      (shop.note && shop.note.includes(keyword))
+    );
+
+    filtered.forEach(shop => createMarker(shop));
+  });
+
+  /* 初回ロード */
   loadShops();
 };
