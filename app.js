@@ -146,7 +146,17 @@ window.initMap = function () {
     const endY = e.changedTouches[0].clientY;
     const diff = startY - endY;
 
-    if (diff > 50) card.classList.add("open");
-    if (diff < -50) card.classList.remove("open");
+    // 上へスワイプ → 開く
+    if (diff > 50) {
+      card.classList.add("open");
+    }
+
+    // 下へスワイプ → 閉じる
+    if (diff < -50) {
+      card.classList.remove("open");
+      setTimeout(() => {
+        card.style.display = "none";
+      }, 300);
+    }
   });
 };
