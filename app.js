@@ -199,7 +199,7 @@ function loadShops(){
       });
 
 
-mmarker.addListener(
+marker.addListener(
 "click",
 ()=>{
 
