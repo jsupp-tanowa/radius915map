@@ -99,6 +99,13 @@ button {
   align-items: center;
   z-index: 999;
   box-shadow: 0 -2px 10px rgba(0,0,0,.2);
+  background: repeating-linear-gradient(
+    90deg,
+    #2e7d32 0px,
+    #2e7d32 20px,
+    #66bb6a 20px,
+    #66bb6a 40px
+  );
 }
 
 .tab-item {
@@ -187,12 +194,3 @@ button {
   background: #eee;
 }
 
-.tab-bar {
-  background: repeating-linear-gradient(
-    90deg,
-    #2e7d32 0px,
-    #2e7d32 20px,
-    #66bb6a 20px,
-    #66bb6a 40px
-  );
-}
