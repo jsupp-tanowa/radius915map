@@ -300,13 +300,55 @@ window.initMap = function(){
       const diff=
       startY-moveY;
 
-      if(diff>50){
-        card.classList.add("open");
-      }
+const card =
+document.getElementById("shopCard");
 
-      if(diff<-50){
-        card.classList.remove("open");
-      }
+if(card){
+
+let startY=0;
+
+card.addEventListener(
+"touchstart",
+e=>{
+
+startY=
+e.touches[0].clientY;
+
+}
+);
+
+card.addEventListener(
+"touchend",
+e=>{
+
+const endY=
+e.changedTouches[0].clientY;
+
+const diff=
+startY-endY;
+
+/* 上へ */
+if(diff>50){
+
+card.classList.add(
+"open"
+);
+
+}
+
+/* 下へ */
+if(diff<-50){
+
+card.classList.remove(
+"open"
+);
+
+}
+
+}
+);
+
+}
 
     }
   );
