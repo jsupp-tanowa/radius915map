@@ -226,6 +226,17 @@ document.getElementById(
 "shopImage"
 ).src=
 
+document.querySelector(
+".close-btn"
+).onclick=()=>{
+
+card.style.display="none";
+
+card.classList.remove(
+"open"
+);
+
+};
 shop.image ||
 "https://picsum.photos/600/300";
 
