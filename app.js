@@ -42,8 +42,6 @@ function moveToCurrentLocation() {
         title: "現在地",
         icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
       });
-
-      loadShops();
     },
     () => alert("位置情報の取得に失敗しました")
   );
@@ -232,4 +230,5 @@ window.initMap = function () {
   // 該当店舗だけ表示
   filtered.forEach(shop => createMarker(shop));
 });
+  loadShops();
 };
