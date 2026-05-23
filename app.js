@@ -72,7 +72,9 @@ function loadShops() {
 
     snapshot.forEach(doc => {
       const shop = doc.data();
-
+      createMarker(shop);
+      allShops.push(shop);
+      
       let distanceText = "";
       if (userLocation) {
         const distance = getDistance(
@@ -136,7 +138,10 @@ window.initMap = function () {
     center: { lat: 34.7284, lng: 135.4814 },
     zoom: 16
   });
-
+  
+  let allShops = [];
+  let markers = [];
+  
   loadShops();
 
   /* bottom-sheet スワイプ */
@@ -164,4 +169,28 @@ window.initMap = function () {
       }, 300);
     }
   });
+  document.getElementById("searchInput").addEventListener("input", e => {
+  const keyword = e.target.value.trim();
+
+  // マーカーを全部消す
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+
+  // キーワードが空 → 全部表示
+  if (keyword === "") {
+    allShops.forEach(shop => createMarker(shop));
+    return;
+  }
+
+  // フィルタ
+  const filtered = allShops.filter(shop =>
+    (shop.name && shop.name.includes(keyword)) ||
+    (shop.team && shop.team.includes(keyword)) ||
+    (shop.genre && shop.genre.includes(keyword)) ||
+    (shop.note && shop.note.includes(keyword))
+  );
+
+  // 該当店舗だけ表示
+  filtered.forEach(shop => createMarker(shop));
+});
 };
