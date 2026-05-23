@@ -257,19 +257,6 @@ width:100%;
 
 }
 
-.close-btn{
-
-position:absolute;
-
-top:15px;
-right:15px;
-
-font-size:24px;
-
-cursor:pointer;
-
-}
-
 .tab-item:active{
   transform:scale(.95);
 }
