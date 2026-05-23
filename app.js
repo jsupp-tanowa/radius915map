@@ -125,7 +125,6 @@ document.getElementById("closeCardBtn").addEventListener("click", () => {
   card.style.display = "none";
 });
 
-
 /* 地図初期化 */
 window.initMap = function () {
   map = new google.maps.Map(document.getElementById("map"), {
