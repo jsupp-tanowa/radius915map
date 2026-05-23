@@ -84,9 +84,9 @@ window.initMap = function () {
         shop.image || "https://picsum.photos/600/300";
 
       document.querySelector(".detail-btn").onclick = () => {
-        const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
-        window.open(googleMapLink, "_blank");
-      };
+  　　　const googleMapLink = `https://www.google.com/maps/place/?q=place_id:${shop.placeId}`;
+  　　　window.open(googleMapLink, "_blank");
+　　　};
     });
 
     markers.push(marker);
