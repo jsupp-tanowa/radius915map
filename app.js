@@ -118,32 +118,13 @@ function loadShops() {
   });
 }
 
-/* カード処理 */
+/* クローズ処理 */
 document.getElementById("closeCardBtn").addEventListener("click", () => {
   const card = document.getElementById("shopCard");
-let startY = 0;
-
-card.addEventListener("touchstart", e => {
-  startY = e.touches[0].clientY;
+  card.classList.remove("open");
+  card.style.display = "none";
 });
 
-card.addEventListener("touchend", e => {
-  const endY = e.changedTouches[0].clientY;
-  const diff = startY - endY;
-
-  // 上へスワイプ → 開く
-  if (diff > 50) {
-    card.classList.add("open");
-  }
-
-  // 下へスワイプ → 閉じる
-  if (diff < -50) {
-    card.classList.remove("open");
-    setTimeout(() => {
-      card.style.display = "none";
-    }, 300); // アニメ後に非表示
-  }
-});
 
 /* 地図初期化 */
 window.initMap = function () {
