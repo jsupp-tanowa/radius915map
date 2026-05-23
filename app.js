@@ -106,6 +106,11 @@ function loadShops() {
           `${shop.note || ""}`;
         document.getElementById("shopImage").src =
           shop.image || "https://picsum.photos/600/300";
+        // ★ 詳細を見るボタンの動作を設定
+　　　  document.querySelector(".detail-btn").onclick = () => {
+    　　　const googleMapLink = `https://www.google.com/maps?q=${shop.lat},${shop.lng}`;
+    　　　window.open(googleMapLink, "_blank");
+  　　　};
       });
     });
 
