@@ -139,8 +139,8 @@ window.initMap = function () {
     filtered.forEach(shop => createMarker(shop));
   });
 
-  
-　/* ジャンルボタン検索
+
+  /* ジャンルボタン検索
 　document.querySelectorAll(".filter-area button").forEach(btn => {
   　btn.addEventListener("click", () => {
     　const genre = btn.innerText.trim();
