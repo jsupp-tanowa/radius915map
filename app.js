@@ -199,13 +199,21 @@ function loadShops(){
       });
 
 
-marker.addListener(
+mmarker.addListener(
 "click",
 ()=>{
 
+const card=
 document.getElementById(
 "shopCard"
-).style.display="block";
+);
+
+card.style.display=
+"block";
+
+card.classList.remove(
+"open"
+);
 
 document.getElementById(
 "shopName"
@@ -226,24 +234,11 @@ document.getElementById(
 "shopImage"
 ).src=
 
-document.querySelector(
-".close-btn"
-).onclick=()=>{
-
-card.style.display="none";
-
-card.classList.remove(
-"open"
-);
-
-};
 shop.image ||
 "https://picsum.photos/600/300";
 
 }
 );
-    });
-
 
     if(!snapshot.empty){
 
