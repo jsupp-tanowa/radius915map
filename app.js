@@ -203,17 +203,9 @@ marker.addListener(
 "click",
 ()=>{
 
-const card=
 document.getElementById(
 "shopCard"
-);
-
-card.style.display=
-"block";
-
-card.classList.remove(
-"open"
-);
+).style.display="block";
 
 document.getElementById(
 "shopName"
@@ -239,6 +231,8 @@ shop.image ||
 
 }
 );
+    });
+
 
     if(!snapshot.empty){
 
