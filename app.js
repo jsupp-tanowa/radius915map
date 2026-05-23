@@ -139,6 +139,25 @@ window.initMap = function () {
     filtered.forEach(shop => createMarker(shop));
   });
 
+  
+　/* ジャンルボタン検索
+　document.querySelectorAll(".filter-area button").forEach(btn => {
+  　btn.addEventListener("click", () => {
+    　const genre = btn.innerText.trim();
+
+    　markers.forEach(m => m.setMap(null));
+    　markers = [];
+
+    　const filtered = allShops.filter(shop =>
+      　shop.genre && shop.genre.includes(genre)
+    　);
+
+    　filtered.forEach(shop => createMarker(shop));
+  　});
+　});
+　*/
+
+
   /* カード閉じる */
   document.getElementById("closeCardBtn").addEventListener("click", () => {
     const card = document.getElementById("shopCard");
