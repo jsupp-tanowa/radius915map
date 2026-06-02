@@ -3,10 +3,48 @@ body {
   font-size: 16px;
 }
 
+/* ヘッダー */
+.app-header{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+
+  height:56px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  z-index:1000;
+
+  background:#0d47a1;
+  color:white;
+
+  font-family:
+  "M PLUS 1p",
+  sans-serif;
+
+  font-size:24px;
+  font-weight:800;
+
+  box-shadow:
+  0 2px 10px rgba(0,0,0,.2);
+  background: repeating-linear-gradient(
+    90deg,
+    #1b5e20 0px,
+    #1b5e20 22px,
+    #388e3c 22px,
+    #388e3c 44px
+  );
+}
+
+
 /* 地図 */
 #map {
-  width: 100%;
-  height: calc(100dvh - 70px);
+  width:100%;
+  height:calc(100dvh - 126px);
+  margin-top:56px;
 }
 
 /* 現在地ボタン */
@@ -47,7 +85,7 @@ button {
 /* 検索バー */
 .search-bar {
   position: absolute;
-  top: 10px;
+  top: 66px;
   left: 10px;
   right: 10px;
   z-index: 999;
@@ -66,7 +104,7 @@ button {
 /* フィルター */
 .filter-area {
   position: absolute;
-  top: 70px;
+  top: 125px;
   left: 10px;
   right: 10px;
   display: flex;
