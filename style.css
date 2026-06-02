@@ -125,6 +125,7 @@ button {
 }
 
 /* 下タブ */
+/*
 .tab-bar {
   position: absolute;
   bottom: 0;
@@ -145,6 +146,7 @@ button {
     #388e3c 44px
   );
 }
+*/
 
 .tab-item {
   text-align: center;
