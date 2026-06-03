@@ -57,10 +57,10 @@ window.initMap = function () {
     zoom: 16
     mapTypeControl:false
   });
-
+/*
   let allShops = [];
   let markers = [];
-
+*/
   /* マーカー作成 */
   function createMarker(shop) {
     const marker = new google.maps.Marker({
