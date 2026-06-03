@@ -45,13 +45,91 @@ function moveToCurrentLocation() {
         title: "現在地",
         icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
       });
-
-      loadShops();
     },
     () => alert("位置情報の取得に失敗しました")
   );
 }
 
+  /* マーカー作成 */
+function createMarker(shop) {
+
+  const marker = new google.maps.Marker({
+    position: {
+      lat: Number(shop.lat),
+      lng: Number(shop.lng)
+    },
+    map: map,
+    title: shop.name,
+    icon: shop.away
+      ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+      : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+  });
+
+  marker.addListener("click", () => {
+
+    const card = document.getElementById("shopCard");
+    card.style.display = "block";
+
+    document.getElementById("shopName").innerText = shop.name;
+
+    document.getElementById("shopInfo").innerHTML =
+      `推しクラブ: ${shop.team}<br>` +
+      `ジャンル: ${shop.genre || ""}<br>` +
+      `${shop.note || ""}`;
+
+    document.getElementById("shopImage").src =
+      shop.image || "https://picsum.photos/600/300";
+
+    document.querySelector(".detail-btn").onclick = () => {
+      const googleMapLink =
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name)}&query_place_id=${shop.placeId}`;
+
+      window.open(googleMapLink, "_blank");
+    };
+  });
+
+  markers.push(marker);
+}
+/* 店舗読込 */
+function loadShops() {
+
+  db.collection("shops").get().then(snapshot => {
+
+    const bounds = new google.maps.LatLngBounds();
+
+    allShops = [];
+
+    markers.forEach(m => m.setMap(null));
+    markers = [];
+
+    snapshot.forEach(doc => {
+      const shop = doc.data();
+      allShops.push(shop);
+      createMarker(shop);
+      bounds.extend(
+        new google.maps.LatLng(
+          Number(shop.lat),
+          Number(shop.lng)
+        )
+      );
+    });
+
+    if (!snapshot.empty) {
+
+      map.fitBounds(bounds);
+
+      google.maps.event.addListenerOnce(
+        map,
+        "bounds_changed",
+        () => {
+          if (map.getZoom() > 14) {
+            map.setZoom(14);
+          }
+        }
+      );
+    }
+  });
+}
 /* 地図初期化 */
 window.initMap = function () {
 
@@ -61,64 +139,61 @@ window.initMap = function () {
     mapTypeControl:false
   });
 
-  /* マーカー作成 */
-  function createMarker(shop) {
-    const marker = new google.maps.Marker({
-      position: { lat: Number(shop.lat), lng: Number(shop.lng) },
-      map: map,
-      title: shop.name,
-      icon: shop.away
-        ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-    });
+  /* 検索バー */
+  document.getElementById("searchInput").addEventListener("input", e => {
+    const keyword = e.target.value.trim();
 
-    marker.addListener("click", () => {
-      const card = document.getElementById("shopCard");
-      card.style.display = "block";
+    markers.forEach(m => m.setMap(null));
+    markers = [];
 
-      document.getElementById("shopName").innerText = shop.name;
-      document.getElementById("shopInfo").innerHTML =
-        `推しクラブ: ${shop.team}<br>` +
-        `ジャンル: ${shop.genre || ""}<br>` +
-        `${shop.note || ""}`;
-      document.getElementById("shopImage").src =
-        shop.image || "https://picsum.photos/600/300";
+    if (keyword === "") {
+      allShops.forEach(shop => createMarker(shop));
+      return;
+    }
 
-      document.querySelector(".detail-btn").onclick = () => {
-        const googleMapLink =
-          `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name)}&query_place_id=${shop.placeId}`;
-        window.open(googleMapLink, "_blank");
-      };
-    });
+    const filtered = allShops.filter(shop =>
+      (shop.name && shop.name.includes(keyword)) ||
+      (shop.team && shop.team.includes(keyword)) ||
+      (shop.genre && shop.genre.includes(keyword)) ||
+      (shop.note && shop.note.includes(keyword))
+    );
 
-    markers.push(marker);
-  }
+    filtered.forEach(shop => createMarker(shop));
+  });
 
-  /* 店舗読込 */
-  function loadShops() {
-    db.collection("shops").get().then(snapshot => {
-      const bounds = new google.maps.LatLngBounds();
+  /* カード閉じる */
+  document.getElementById("closeCardBtn").addEventListener("click", () => {
+    const card = document.getElementById("shopCard");
+    card.classList.remove("open");
+    card.style.display = "none";
+  });
 
-      allShops = [];
-      markers.forEach(m => m.setMap(null));
-      markers = [];
+  /* スワイプ処理 */
+  const card = document.getElementById("shopCard");
+  let startY = 0;
 
-      snapshot.forEach(doc => {
-        const shop = doc.data();
-        allShops.push(shop);
-        createMarker(shop);
-        bounds.extend(new google.maps.LatLng(Number(shop.lat), Number(shop.lng)));
-      });
+  card.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+  });
 
-      if (!snapshot.empty) {
-        map.fitBounds(bounds);
-        google.maps.event.addListenerOnce(map, "bounds_changed", () => {
-          if (map.getZoom() > 14) map.setZoom(14);
-        });
-      }
-    });
-  }
+  card.addEventListener("touchend", e => {
+    const endY = e.changedTouches[0].clientY;
+    const diff = startY - endY;
 
+    if (diff > 50) {
+      card.classList.add("open");
+    }
+
+    if (diff < -50) {
+      card.classList.remove("open");
+      setTimeout(() => {
+        card.style.display = "none";
+      }, 300);
+    }
+  });
+
+  loadShops();
+};
   /* 検索バー */
   document.getElementById("searchInput").addEventListener("input", e => {
     const keyword = e.target.value.trim();
