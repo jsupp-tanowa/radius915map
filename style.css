@@ -85,10 +85,10 @@ button {
 /* 検索バー */
 .search-bar {
   position: absolute;
-  top: 150px;
+  top: 66px;
   left: 10px;
   right: 10px;
-  z-index: 1001;
+  z-index: 999;
 }
 
 .search-bar input {
