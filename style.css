@@ -85,7 +85,7 @@ button {
 /* 検索バー */
 .search-bar {
   position: absolute;
-  top: 90px;
+  top: 150px;
   left: 15px;
   right: 15px;
   z-index: 1001;
