@@ -56,10 +56,8 @@ window.initMap = function () {
     center: { lat: 34.7284, lng: 135.4814 },
     zoom: 16
   });
-
-  let allShops = [];
-  let markers = [];
 */
+ 
   map = new google.maps.Map(
   document.getElementById("map"),
   {
@@ -71,6 +69,14 @@ window.initMap = function () {
 
     mapTypeControl:false
   }
+
+  let map;
+  let userLocation = null;
+  let currentMarker = null;
+
+  let allShops = [];
+  let markers = [];
+
 );
   /* マーカー作成 */
   function createMarker(shop) {
