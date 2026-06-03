@@ -9,14 +9,14 @@ body {
   top:0;
   left:0;
   right:0;
-
+  
   height:56px;
 
   display:flex;
   justify-content:center;
   align-items:center;
-
   z-index:1000;
+  overflow:hidden;
 
   background:#0d47a1;
   color:white;
