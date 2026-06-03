@@ -51,33 +51,15 @@ function moveToCurrentLocation() {
 
 /* 地図初期化 */
 window.initMap = function () {
-/*
+
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 34.7284, lng: 135.4814 },
     zoom: 16
   });
-*/
- 
-  map = new google.maps.Map(
-  document.getElementById("map"),
-  {
-    center:{
-      lat:34.7284,
-      lng:135.4814
-    },
-    zoom:16,
-
-    mapTypeControl:false
-  }
-
-  let map;
-  let userLocation = null;
-  let currentMarker = null;
 
   let allShops = [];
   let markers = [];
 
-);
   /* マーカー作成 */
   function createMarker(shop) {
     const marker = new google.maps.Marker({
@@ -209,13 +191,6 @@ window.initMap = function () {
       }, 300);
     }
 });
-
   /* 初回ロード */
   loadShops();
 };
-
-function showRoadMap(){
-  map.setMapTypeId(
-    google.maps.MapTypeId.ROADMAP
-  );
-}
