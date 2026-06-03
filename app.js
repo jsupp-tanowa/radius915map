@@ -15,6 +15,9 @@ let map;
 let userLocation = null;
 let currentMarker = null;
 
+let allShops = [];
+let markers = [];
+
 /* 現在地 */
 function moveToCurrentLocation() {
   if (!navigator.geolocation) {
@@ -57,9 +60,6 @@ window.initMap = function () {
     zoom: 16,
     mapTypeControl:false
   });
-
-  let allShops = [];
-  let markers = [];
 
   /* マーカー作成 */
   function createMarker(shop) {
