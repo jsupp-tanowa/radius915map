@@ -203,14 +203,13 @@ window.initMap = function () {
       }, 300);
     }
 });
+
   /* 初回ロード */
   loadShops();
 };
 
 function showRoadMap(){
-
   map.setMapTypeId(
     google.maps.MapTypeId.ROADMAP
   );
-
 }
