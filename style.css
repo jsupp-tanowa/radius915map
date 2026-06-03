@@ -94,9 +94,10 @@ button {
 
 .search-bar input {
   width: 100%;
-  padding: 14px;
+  height: 56px;
+  padding:0 20px;
   border: none;
-  border-radius: 25px;
+  border-radius: 28px;
   font-size: 16px;
   box-shadow: 0 2px 10px rgba(0,0,0,.2);
   box-sizing: border-box;
