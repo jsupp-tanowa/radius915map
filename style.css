@@ -92,35 +92,21 @@ button {
 
 /* 検索バー */
 .search-bar {
-  position:absolute;
-  top:82px;
-  left:10px;
-  right:10px;
-  display:none;
-}
-
-.search-bar.open {
-  display:block;
+  position: absolute;
+  top: 82px;
+  left: 10px;
+  right: 10px;
+  z-index: 999;
 }
 
 .search-bar input {
   width: 100%;
   padding: 14px;
-  border: 2px solid red !important;
+  border: none;
   border-radius: 25px;
   font-size: 16px;
   box-shadow: 0 2px 10px rgba(0,0,0,.2);
   box-sizing: border-box;
-  
-  color: #000;
-  background: #fff;
-}
-
-.search-bar input,
-.search-bar input::placeholder {
-  color: #000 !important;
-  -webkit-text-fill-color: #000 !important;
-  opacity: 1 !important;
 }
 
 /* フィルター */
