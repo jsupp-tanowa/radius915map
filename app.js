@@ -93,7 +93,19 @@ window.initMap = function () {
 
     markers.push(marker);
   }
+  
+  /* 検索タブ */
+  const searchTab = document.getElementById("searchTab");
+  const searchBar = document.querySelector(".search-bar");
 
+  searchTab.addEventListener("click", () => {
+    searchBar.classList.toggle("open");
+
+    if (searchBar.classList.contains("open")) {
+      document.getElementById("searchInput").focus();
+    }
+  });
+  
   /* 店舗読込 */
   function loadShops() {
     db.collection("shops").get().then(snapshot => {
