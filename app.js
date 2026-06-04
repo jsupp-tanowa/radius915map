@@ -99,9 +99,19 @@ window.initMap = function () {
   const searchBar = document.querySelector(".search-bar");
 
   searchTab.addEventListener("click", () => {
-    searchBar.classList.toggle("open");
+  searchBar.classList.toggle("open");
 
   });
+
+  /* 検索閉じる */
+  const closeSearch = document.getElementById("closeSearch");
+  closeSearch.addEventListener("click", () => {
+  searchBar.classList.remove("open");
+  document.getElementById("searchInput").value = "";
+  markers.forEach(m => m.setMap(null));
+  markers = [];
+  allShops.forEach(shop => createMarker(shop));
+  })
   
   /* 店舗読込 */
   function loadShops() {
