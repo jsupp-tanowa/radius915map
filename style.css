@@ -92,17 +92,22 @@ button {
 
 /* 検索バー */
 .search-bar {
-  position: absolute;
-  top: 82px;
-  left: 10px;
-  right: 10px;
-  z-index: 999;
+  position:absolute;
+  top:82px;
+  left:10px;
+  right:10px;
 
-  display: none;
+  opacity:0;
+  transform:translateY(-15px);
+  pointer-events:none;
+
+  transition:.25s;
 }
 
 .search-bar.open {
-  display: block;
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
 }
 
 .search-bar input {
