@@ -101,9 +101,6 @@ window.initMap = function () {
   searchTab.addEventListener("click", () => {
     searchBar.classList.toggle("open");
 
-    if (searchBar.classList.contains("open")) {
-      document.getElementById("searchInput").focus();
-    }
   });
   
   /* 店舗読込 */
