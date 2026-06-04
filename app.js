@@ -155,6 +155,13 @@ window.initMap = function () {
   document.getElementById("searchInput").addEventListener("change", () => {
    searchBar.classList.remove("open");
  });
+
+document.getElementById("searchInput").value = "";
+
+markers.forEach(m => m.setMap(null));
+markers = [];
+allShops.forEach(shop => createMarker(shop));
+  
   /* ジャンルボタン検索
 　document.querySelectorAll(".filter-area button").forEach(btn => {
   　btn.addEventListener("click", () => {
