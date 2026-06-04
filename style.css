@@ -96,18 +96,11 @@ button {
   top:82px;
   left:10px;
   right:10px;
-
-  opacity:0;
-  transform:translateY(-15px);
-  pointer-events:none;
-
-  transition:.25s;
+  display:none;
 }
 
 .search-bar.open {
-  opacity:1;
-  transform:translateY(0);
-  pointer-events:auto;
+  display:block;
 }
 
 .search-bar input {
