@@ -89,12 +89,7 @@ button {
     padding: 14px 18px;
   }
 }
-#searchInput{
-  width:100%;
-  color:#000;
-  background:#fff;
-  border:2px solid red;
-}
+
 /* 検索バー */
 .search-bar {
   position:absolute;
