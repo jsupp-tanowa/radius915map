@@ -71,7 +71,7 @@ window.initMap = function () {
         ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
         : "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
     });
-
+  
     marker.addListener("click", () => {
       const card = document.getElementById("shopCard");
       card.style.display = "block";
@@ -141,7 +141,20 @@ window.initMap = function () {
     filtered.forEach(shop => createMarker(shop));
   });
 
+  const searchTab = document.getElementById("searchTab");
+  const searchBar = document.querySelector(".search-bar");
 
+  searchTab.addEventListener("click", () => {
+    searchBar.classList.toggle("open");
+
+    if (searchBar.classList.contains("open")) {
+      document.getElementById("searchInput").focus();
+    }
+  });
+
+  document.getElementById("searchInput").addEventListener("change", () => {
+   searchBar.classList.remove("open");
+ });
   /* ジャンルボタン検索
 　document.querySelectorAll(".filter-area button").forEach(btn => {
   　btn.addEventListener("click", () => {
