@@ -114,6 +114,7 @@ button {
   border: none;
   border-radius: 25px;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 searchTab.addEventListener("click", () => {
