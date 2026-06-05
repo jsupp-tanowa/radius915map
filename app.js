@@ -97,6 +97,10 @@ window.initMap = function () {
   /* 検索タブ */
   const searchTab = document.getElementById("searchTab");
   const searchBar = document.querySelector(".search-bar");
+
+  searchTab.addEventListener("click", () => {
+    searchBar.classList.toggle("open");
+
   });
   
   /* 店舗読込 */
