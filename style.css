@@ -177,6 +177,11 @@ button {
   transform: scale(.95);
 }
 
+.tab-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 /* 店舗カード */
 .bottom-sheet {
   position: absolute;
