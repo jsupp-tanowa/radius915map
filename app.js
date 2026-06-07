@@ -1,6 +1,6 @@
 /* Firebase */
 const firebaseConfig = {
-  apiKey: "MY KEY",
+  apiKey: "AIzaSyCyzwwPiCcUCICxv6kcx7ZlaNkMa46hcVA",
   authDomain: "japan-football-supporters-hub.firebaseapp.com",
   projectId: "japan-football-supporters-hub",
   storageBucket: "japan-football-supporters-hub.firebasestorage.app",
@@ -84,7 +84,7 @@ window.initMap = function () {
 
       document.getElementById("shopInfo").innerHTML =
         teamLine +
-        `ジャンル: ${shop.genre || ""}<br>` +
+        `カテゴリー: ${shop.category || ""}<br>` +
         noteLine;
 
       // supportLevel!=0 かつ image あり のときのみ画像を表示
@@ -121,7 +121,7 @@ window.initMap = function () {
         return (
           (shop.name && shop.name.includes(keyword)) ||
           (shop.team && shop.team.includes(keyword)) ||
-          (shop.genre && shop.genre.includes(keyword)) ||
+          (shop.category && shop.category.includes(keyword)) ||
           (shop.note && shop.note.includes(keyword))
         );
       }
