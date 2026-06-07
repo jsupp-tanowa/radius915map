@@ -167,7 +167,8 @@ button {
 .tab-item {
   text-align: center;
   font-size: 13px;
-  color: #444;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
   font-family: "Zen Kaku Gothic New", sans-serif;
   font-weight: 700;
 }
