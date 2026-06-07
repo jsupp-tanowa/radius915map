@@ -1,6 +1,6 @@
 /* Firebase */
 const firebaseConfig = {
-  apiKey: "AIzaSyCyzwwPiCcUCICxv6kcx7ZlaNkMa46hcVA",
+  apiKey: "MY KEY",
   authDomain: "japan-football-supporters-hub.firebaseapp.com",
   projectId: "japan-football-supporters-hub",
   storageBucket: "japan-football-supporters-hub.firebasestorage.app",
@@ -15,7 +15,7 @@ let map;
 let userLocation = null;
 let currentMarker = null;
 
-/* 現在地 */
+/* 現在地ボタン */
 function moveToCurrentLocation() {
   if (!navigator.geolocation) {
     alert("位置情報が使えません");
@@ -30,9 +30,8 @@ function moveToCurrentLocation() {
       };
 
       userLocation = currentPos;
-
       map.setCenter(currentPos);
-      map.setZoom(14);
+      map.setZoom(11); // ③ 30km四方程度
 
       if (currentMarker) currentMarker.setMap(null);
 
@@ -42,8 +41,6 @@ function moveToCurrentLocation() {
         title: "現在地",
         icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
       });
-
-      loadShops();
     },
     () => alert("位置情報の取得に失敗しました")
   );
@@ -52,23 +49,27 @@ function moveToCurrentLocation() {
 /* 地図初期化 */
 window.initMap = function () {
 
+  // ③ 初期ズームを11に（30km四方程度）
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 34.7284, lng: 135.4814 },
-    zoom: 16,
+    zoom: 11,
     mapTypeControl: false
   });
 
   let allShops = [];
   let markers = [];
-  let showGeneral = false; // 一般店舗(supportLevel=0)の表示フラグ
+  let showGeneral = false;
 
-  /* マーカー作成：ピン色は赤に統一 */
+  /* ① マーカー作成：supportLevel!=0 → 青、=0 → 赤 */
   function createMarker(shop) {
+    const isSupporter = shop.supportLevel !== 0;
     const marker = new google.maps.Marker({
       position: { lat: Number(shop.lat), lng: Number(shop.lng) },
       map: map,
       title: shop.name,
-      icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+      icon: isSupporter
+        ? "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        : "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
     });
 
     marker.addListener("click", () => {
@@ -77,9 +78,7 @@ window.initMap = function () {
 
       document.getElementById("shopName").innerText = shop.name;
 
-      const isSupporter = shop.supportLevel !== 0;
-
-      // ② supportLevel!=0 のときのみ team/note を表示
+      // supportLevel!=0 のときのみ team/note を表示
       const teamLine = (isSupporter && shop.team) ? `推しクラブ: ${shop.team}<br>` : "";
       const noteLine = (isSupporter && shop.note) ? `${shop.note}` : "";
 
@@ -88,7 +87,7 @@ window.initMap = function () {
         `ジャンル: ${shop.genre || ""}<br>` +
         noteLine;
 
-      // ② supportLevel!=0 かつ image あり のときのみ画像を表示
+      // supportLevel!=0 かつ image あり のときのみ画像を表示
       const imgEl = document.getElementById("shopImage");
       if (isSupporter && shop.image) {
         imgEl.src = shop.image;
@@ -116,11 +115,8 @@ window.initMap = function () {
     const keyword = document.getElementById("searchInput").value.trim();
 
     const visible = allShops.filter(shop => {
-      // ① published=true のみ表示
       if (!shop.published) return false;
-      // supportLevel=0 は showGeneral が true のときのみ表示
       if (shop.supportLevel === 0 && !showGeneral) return false;
-      // 検索フィルター
       if (keyword) {
         return (
           (shop.name && shop.name.includes(keyword)) ||
@@ -142,13 +138,11 @@ window.initMap = function () {
     generalTab.style.opacity = showGeneral ? "1" : "0.5";
     refreshMarkers();
   });
-  // 初期状態はOFF（薄く表示）
   generalTab.style.opacity = "0.5";
 
   /* 検索タブ */
   const searchTab = document.getElementById("searchTab");
   const searchBar = document.querySelector(".search-bar");
-
   searchTab.addEventListener("click", () => {
     searchBar.classList.toggle("open");
   });
@@ -156,28 +150,15 @@ window.initMap = function () {
   /* 店舗読込 */
   function loadShops() {
     db.collection("shops").get().then(snapshot => {
-      const bounds = new google.maps.LatLngBounds();
-
       allShops = [];
       markers.forEach(m => m.setMap(null));
       markers = [];
 
       snapshot.forEach(doc => {
-        const shop = doc.data();
-        allShops.push(shop);
-        if (shop.published) {
-          bounds.extend(new google.maps.LatLng(Number(shop.lat), Number(shop.lng)));
-        }
+        allShops.push(doc.data());
       });
 
       refreshMarkers();
-
-      if (!snapshot.empty) {
-        map.fitBounds(bounds);
-        google.maps.event.addListenerOnce(map, "bounds_changed", () => {
-          if (map.getZoom() > 14) map.setZoom(14);
-        });
-      }
     });
   }
 
@@ -204,20 +185,38 @@ window.initMap = function () {
   card.addEventListener("touchend", e => {
     const endY = e.changedTouches[0].clientY;
     const diff = startY - endY;
-
-    // 上へスワイプ → 開く
-    if (diff > 50) {
-      card.classList.add("open");
-    }
-
-    // 下へスワイプ → 閉じる
+    if (diff > 50) card.classList.add("open");
     if (diff < -50) {
       card.classList.remove("open");
-      setTimeout(() => {
-        card.style.display = "none";
-      }, 300);
+      setTimeout(() => { card.style.display = "none"; }, 300);
     }
   });
+
+  /* ② 初期起動時に位置情報を取得（許可時のみ・エラーは無視） */
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const currentPos = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+        userLocation = currentPos;
+        map.setCenter(currentPos);
+        // ③ 現在地取得時もzoom=11を維持
+        map.setZoom(11);
+
+        if (currentMarker) currentMarker.setMap(null);
+        currentMarker = new google.maps.Marker({
+          position: currentPos,
+          map: map,
+          title: "現在地",
+          icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+        });
+      },
+      () => { /* 拒否・エラー時は何もしない */ },
+      { timeout: 8000 }
+    );
+  }
 
   /* 初回ロード */
   loadShops();
