@@ -1,6 +1,6 @@
 /* Firebase */
 const firebaseConfig = {
-  apiKey: "MY KEY",
+  apiKey: "AIzaSyCyzwwPiCcUCICxv6kcx7ZlaNkMa46hcVA",
   authDomain: "japan-football-supporters-hub.firebaseapp.com",
   projectId: "japan-football-supporters-hub",
   storageBucket: "japan-football-supporters-hub.firebasestorage.app",
