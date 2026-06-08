@@ -72,6 +72,12 @@ button {
   box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
 
+/* ①地図移動コントロール非表示 */
+.gm-bundled-control,
+.gm-svpc {
+  display: none !important;
+}
+
 /* Google InfoWindow */
 .gm-style .gm-style-iw {
   font-size: 18px !important;
