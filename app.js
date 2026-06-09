@@ -212,9 +212,10 @@ window.initMap = function () {
       if (variants.length) {
         const teamsStr = Array.isArray(s.teams) ? s.teams.join(" ") : (s.teams || "");
         return (
-          matchField(s.name,    variants) ||
-          matchField(s.subname, variants) ||
-          matchField(teamsStr,  variants)
+          matchField(s.name,       variants) ||
+          matchField(s.subname,    variants) ||
+          matchField(s.prefecture, variants) ||
+          matchField(teamsStr,     variants)
         );
       }
       return true;
