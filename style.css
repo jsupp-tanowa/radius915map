@@ -51,8 +51,8 @@ body {
 /* 地図 */
 #map {
   width:100%;
-  height:calc(100dvh - 142px);
-  margin-top:72px;
+  height:calc(100dvh - 210px);
+  margin-top:130px;
 }
 
 /* 現在地ボタン */
@@ -107,29 +107,21 @@ button {
   }
 }
 
-/* 検索バー */
-.search-bar {
+/* 検索バー（固定表示） */
+.search-bar-fixed {
   position: absolute;
   top: 72px;
   left: 10px;
   right: 10px;
   z-index: 999;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.search-bar.open {
-  max-height: 70px;
-  overflow: visible;
+  padding: 8px 0;
 }
 
 .search-bar-inner {
   position: relative;
-  margin: 6px 4px;
 }
 
-.search-bar input {
+.search-bar-fixed input {
   width: 100%;
   padding: 12px 40px 12px 16px;
   border: none;
