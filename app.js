@@ -105,14 +105,15 @@ window.initMap = function () {
   routeTab.addEventListener("click", () => {
     if (!currentDestination) return;
 
-    const dest = `place_id:${currentDestination.placeid}`;
+    const destPlaceId = encodeURIComponent(currentDestination.placeid);
+    const destName    = encodeURIComponent(currentDestination.name);
     const origin = userLocation
       ? `${userLocation.lat},${userLocation.lng}`
       : "";
 
     const url = origin
-      ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&travelmode=transit`
-      : `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=transit`;
+      ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destName}&destination_place_id=${destPlaceId}&travelmode=transit`
+      : `https://www.google.com/maps/dir/?api=1&destination=${destName}&destination_place_id=${destPlaceId}&travelmode=transit`;
 
     window.open(url, "_blank");
   });
