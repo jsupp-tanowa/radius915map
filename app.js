@@ -25,11 +25,13 @@ function toKatakana(str) {
     String.fromCharCode(ch.charCodeAt(0) + 0x60));
 }
 function normalizeKeyword(kw) {
-  return [kw, toHiragana(kw), toKatakana(kw)];
+  const lower = kw.toLowerCase();
+  return [lower, toHiragana(lower), toKatakana(lower)];
 }
 function matchField(field, variants) {
   if (!field) return false;
-  return variants.some(v => field.includes(v));
+  const f = field.toLowerCase();
+  return variants.some(v => f.includes(v));
 }
 
 /* 現在地ボタン */
