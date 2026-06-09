@@ -105,15 +105,17 @@ window.initMap = function () {
   routeTab.addEventListener("click", () => {
     if (!currentDestination) return;
 
-    // 目的地は緯度経度で渡す（place_idより確実）
-    const destLatLng = `${currentDestination.lat},${currentDestination.lng}`;
+    // 目的地：名前+place_idで表示名を出す
+    const destName    = encodeURIComponent(currentDestination.name);
+    const destPlaceId = encodeURIComponent(currentDestination.placeid);
+    // 出発地：緯度経度で渡す（Googleマップ側で「現在地」と表示される）
     const origin = userLocation
       ? `${userLocation.lat},${userLocation.lng}`
       : "";
 
     const url = origin
-      ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destLatLng}&travelmode=transit`
-      : `https://www.google.com/maps/dir/?api=1&destination=${destLatLng}&travelmode=transit`;
+      ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destName}&destination_place_id=${destPlaceId}&travelmode=transit`
+      : `https://www.google.com/maps/dir/?api=1&destination=${destName}&destination_place_id=${destPlaceId}&travelmode=transit`;
 
     window.open(url, "_blank");
   });
