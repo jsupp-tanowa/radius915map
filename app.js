@@ -202,9 +202,6 @@ window.initMap = function () {
     });
 
     filtered.forEach(shop => createShopMarker(shop));
-
-    // ② 検索時のみfitBounds
-    if (variants.length && shopMarkers.length > 0) fitToMarkers(shopMarkers);
   }
 
   /* ── スタジアムマーカー再描画 ── */
