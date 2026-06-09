@@ -95,7 +95,6 @@ window.initMap = function () {
   function clearSearch() {
     searchInput.value = "";
     updateClearBtn();
-    refreshAllMarkers();
   }
 
   /* ── ② ヒットピン全体にfitBounds ── */
@@ -125,7 +124,7 @@ window.initMap = function () {
 
     marker.addListener("click", () => {
       openCard();
-      document.getElementById("shopName").innerText = stadium.name;
+      document.getElementById("shopName").innerText = (stadium.subname && stadium.subname.trim()) ? stadium.subname : stadium.name;
       const teamsText = Array.isArray(stadium.teams) && stadium.teams.length
         ? `ホームクラブ: ${stadium.teams.join(" / ")}` : "";
       document.getElementById("shopInfo").innerHTML = teamsText;
@@ -243,7 +242,7 @@ window.initMap = function () {
   generalTab.addEventListener("click", () => {
     showGeneral = !showGeneral;
     generalTab.style.opacity = showGeneral ? "1" : "0.5";
-    clearSearch(); // ③
+    clearSearch();
     refreshShopMarkers();
   });
   generalTab.style.opacity = "0.5";
@@ -253,7 +252,7 @@ window.initMap = function () {
   stadiumTab.addEventListener("click", () => {
     showStadiums = !showStadiums;
     stadiumTab.style.opacity = showStadiums ? "1" : "0.5";
-    clearSearch(); // ③
+    clearSearch();
     refreshStadiumMarkers();
   });
   stadiumTab.style.opacity = "1";
