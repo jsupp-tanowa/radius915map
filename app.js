@@ -30,8 +30,7 @@ function normalizeKeyword(kw) {
 }
 function matchField(field, variants) {
   if (!field) return false;
-  const f = field.toLowerCase();
-  return variants.some(v => f.includes(v));
+  return variants.some(v => field.toLowerCase().includes(v));
 }
 
 /* 現在地ボタン */
@@ -48,6 +47,8 @@ function moveToCurrentLocation() {
         position: p, map, title: "現在地",
         icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
       });
+      // ①現在地取得時に出発地を自動セット
+      setOrigin({ lat: p.lat, lng: p.lng, name: "現在地" });
     },
     () => alert("位置情報の取得に失敗しました")
   );
@@ -65,15 +66,52 @@ window.initMap = function () {
     fullscreenControl: false
   });
 
-  let allShops    = [];
-  let allStadiums = [];
+  let allShops       = [];
+  let allStadiums    = [];
   let shopMarkers    = [];
   let stadiumMarkers = [];
-  let showGeneral  = false;
-  let showStadiums = true;
+  let showGeneral    = false;
+  let showStadiums   = true;
+  let hadStadiumResults = false; // ③前回stadium検索ヒットフラグ
 
-  /* ⑤ 経路検索先（現在表示中のカードのplaceid・name） */
-  let currentDestination = null; // { placeid, name, lat, lng }
+  /* ── ①② 出発地管理 ── */
+  let originData = null; // { lat, lng, name }
+
+  const setOriginChk    = document.getElementById("setOriginChk");
+  const clearOriginBtn  = document.getElementById("clearOriginBtn");
+
+  // 出発地をセット（外部からも呼べるよう window に公開）
+  window.setOrigin = function(data) {
+    originData = data;
+    clearOriginBtn.style.display = "block";
+    // チェックボックスをONに
+    if (setOriginChk) setOriginChk.checked = true;
+  };
+
+  // ② 出発地クリア
+  clearOriginBtn.addEventListener("click", () => {
+    originData = null;
+    clearOriginBtn.style.display = "none";
+    if (setOriginChk) setOriginChk.checked = false;
+  });
+
+  // カードの「出発地にセット」チェックボックス
+  setOriginChk.addEventListener("change", () => {
+    if (setOriginChk.checked && currentDestination) {
+      originData = {
+        lat:  currentDestination.lat,
+        lng:  currentDestination.lng,
+        name: currentDestination.name
+      };
+      clearOriginBtn.style.display = "block";
+    } else {
+      originData = null;
+      clearOriginBtn.style.display = "none";
+    }
+  });
+
+  /* ── 経路検索先 ── */
+  let currentDestination = null;
 
   /* ── カード ── */
   function openCard() {
@@ -83,12 +121,13 @@ window.initMap = function () {
     const card = document.getElementById("shopCard");
     card.classList.remove("open");
     card.style.display = "none";
-    // ④ カードを閉じたら経路検索ボタンを無効化
     setRouteTabEnabled(false);
     currentDestination = null;
+    // チェックボックスをリセット（出発地データは保持）
+    if (setOriginChk) setOriginChk.checked = false;
   }
 
-  /* ④ 経路検索タブの有効/無効切替 */
+  /* ④ 経路検索タブ有効/無効 */
   const routeTab = document.getElementById("routeTab");
   function setRouteTabEnabled(enabled) {
     if (enabled) {
@@ -99,18 +138,18 @@ window.initMap = function () {
       routeTab.style.opacity = "0.4";
     }
   }
-  setRouteTabEnabled(false); // 初期は無効
+  setRouteTabEnabled(false);
 
-  /* ⑤ 経路検索実行 */
+  /* 経路検索実行 */
   routeTab.addEventListener("click", () => {
     if (!currentDestination) return;
 
-    // 目的地：名前+place_idで表示名を出す
     const destName    = encodeURIComponent(currentDestination.name);
     const destPlaceId = encodeURIComponent(currentDestination.placeid);
-    // 出発地：緯度経度で渡す（Googleマップ側で「現在地」と表示される）
-    const origin = userLocation
-      ? `${userLocation.lat},${userLocation.lng}`
+
+    // 出発地：originData があればそれを使用、なければ省略
+    const origin = originData
+      ? `${originData.lat},${originData.lng}`
       : "";
 
     const url = origin
@@ -120,16 +159,14 @@ window.initMap = function () {
     window.open(url, "_blank");
   });
 
-  /* ── 検索バー クリアボタン ── */
+  /* ── 検索バークリア ── */
   const searchInput    = document.getElementById("searchInput");
   const searchClearBtn = document.getElementById("searchClearBtn");
 
   function updateClearBtn() {
     searchClearBtn.style.display = searchInput.value.length > 0 ? "block" : "none";
   }
-  searchClearBtn.addEventListener("click", () => {
-    clearSearch();
-  });
+  searchClearBtn.addEventListener("click", clearSearch);
   function clearSearch() {
     searchInput.value = "";
     updateClearBtn();
@@ -162,37 +199,31 @@ window.initMap = function () {
 
     marker.addListener("click", () => {
       openCard();
-
-      // ① subname優先、なければname
       const displayName = (stadium.subname && stadium.subname.trim())
         ? stadium.subname : stadium.name;
       document.getElementById("shopName").innerText = displayName;
-
       const teamsText = Array.isArray(stadium.teams) && stadium.teams.length
         ? `ホームクラブ: ${stadium.teams.join(" / ")}` : "";
       document.getElementById("shopInfo").innerHTML = teamsText;
-
       const imgEl = document.getElementById("shopImage");
       imgEl.src = ""; imgEl.style.display = "none";
 
-      // 詳細ボタン → Googleマップ
       document.querySelector(".detail-btn").onclick = () => {
         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(stadium.name)}&query_place_id=${stadium.placeid}`, "_blank");
       };
 
-      // radiusに応じてズーム
       const r = Number(stadium.radius) || 3;
       const zoom = r <= 1 ? 15 : r <= 2 ? 14 : r <= 3 ? 13 : r <= 5 ? 12 : 11;
       map.setCenter({ lat: Number(stadium.lat), lng: Number(stadium.lng) });
       map.setZoom(zoom);
 
-      // ④ 経路検索ボタン有効化
       currentDestination = {
         placeid: stadium.placeid,
         name: displayName,
         lat: Number(stadium.lat),
         lng: Number(stadium.lng)
       };
+      setOriginChk.checked = false;
       setRouteTabEnabled(true);
     });
 
@@ -215,30 +246,27 @@ window.initMap = function () {
     marker.addListener("click", () => {
       openCard();
       document.getElementById("shopName").innerText = shop.name;
-
       const teamLine = (isSupporter && shop.team) ? `推しクラブ: ${shop.team}<br>` : "";
       const noteLine = (isSupporter && shop.note) ? `${shop.note}` : "";
       document.getElementById("shopInfo").innerHTML =
         teamLine + `ジャンル: ${shop.category || ""}<br>` + noteLine;
-
       const imgEl = document.getElementById("shopImage");
       if (isSupporter && shop.image) {
         imgEl.src = shop.image; imgEl.style.display = "block";
       } else {
         imgEl.src = ""; imgEl.style.display = "none";
       }
-
       document.querySelector(".detail-btn").onclick = () => {
         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.name)}&query_place_id=${shop.placeid}`, "_blank");
       };
 
-      // ④ 経路検索ボタン有効化
       currentDestination = {
         placeid: shop.placeid,
         name: shop.name,
         lat: Number(shop.lat),
         lng: Number(shop.lng)
       };
+      setOriginChk.checked = false;
       setRouteTabEnabled(true);
     });
 
@@ -294,24 +322,29 @@ window.initMap = function () {
 
     filtered.forEach(s => createStadiumMarker(s));
 
-    // stadium検索時のみfitBounds
-    if (variants.length && stadiumMarkers.length > 0) fitToMarkers(stadiumMarkers);
+    // ③ 今回ヒットあり かつ 前回もヒットありor初回 のときのみfitBounds
+    if (variants.length && stadiumMarkers.length > 0 && hadStadiumResults) {
+      fitToMarkers(stadiumMarkers);
+    }
+    // 初回stadium検索ヒット時もfitBounds
+    if (variants.length && stadiumMarkers.length > 0 && !hadStadiumResults) {
+      fitToMarkers(stadiumMarkers);
+      hadStadiumResults = true;
+    }
+    // ③ 今回ヒットなし → フラグをリセット（次回ズームしない）
+    if (variants.length && stadiumMarkers.length === 0) {
+      hadStadiumResults = false;
+    }
+    // キーワードなし → フラグリセット
+    if (!variants.length) {
+      hadStadiumResults = false;
+    }
   }
 
   function refreshAllMarkers() {
     refreshShopMarkers();
     refreshStadiumMarkers();
   }
-
-  /* ── タブ：一般店舗 ── */
-  const generalTab = document.getElementById("generalTab");
-  generalTab.addEventListener("click", () => {
-    showGeneral = !showGeneral;
-    generalTab.style.opacity = showGeneral ? "1" : "0.5";
-    clearSearch();
-    refreshShopMarkers();
-  });
-  generalTab.style.opacity = "0.5";
 
   /* ── タブ：スタジアム ── */
   const stadiumTab = document.getElementById("stadiumTab");
@@ -322,6 +355,16 @@ window.initMap = function () {
     refreshStadiumMarkers();
   });
   stadiumTab.style.opacity = "1";
+
+  /* ── タブ：一般店舗 ── */
+  const generalTab = document.getElementById("generalTab");
+  generalTab.addEventListener("click", () => {
+    showGeneral = !showGeneral;
+    generalTab.style.opacity = showGeneral ? "1" : "0.5";
+    clearSearch();
+    refreshShopMarkers();
+  });
+  generalTab.style.opacity = "0.5";
 
   /* ── 検索バー入力 ── */
   searchInput.addEventListener("input", () => {
@@ -375,6 +418,8 @@ window.initMap = function () {
           position: p, map, title: "現在地",
           icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
         });
+        // ①現在地取得時に出発地を自動セット
+        setOrigin({ lat: p.lat, lng: p.lng, name: "現在地" });
       },
       () => {},
       { timeout: 8000 }

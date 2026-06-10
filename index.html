@@ -45,7 +45,16 @@
   
   <!-- 現在地ボタン -->
   <div class="button-area">
-    <button onclick="moveToCurrentLocation()" class="location-btn">📍</button>
+    <button onclick="moveToCurrentLocation()" class="location-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" fill="#4285F4"/>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="#4285F4" stroke-width="2" opacity="0.4"/>
+        <line x1="12" y1="2" x2="12" y2="6" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="18" x2="12" y2="22" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+        <line x1="2" y1="12" x2="6" y2="12" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18" y1="12" x2="22" y2="12" stroke="#4285F4" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
   </div>
 
   <!-- 地図 -->
@@ -58,14 +67,21 @@
     <img id="shopImage" class="shop-image" src="">
     <div id="shopName" class="bottom-title">店名</div>
     <div id="shopInfo" class="bottom-info">説明</div>
+    <div class="origin-row">
+      <label class="origin-label">
+        <input type="checkbox" id="setOriginChk">
+        出発地にセット
+      </label>
+      <button id="clearOriginBtn" class="clear-origin-btn" style="display:none;">出発地クリア</button>
+    </div>
     <button class="detail-btn">詳細を見る</button>
   </div>
 
   <!-- 下タブ -->
   <div class="tab-bar">
+    <div class="tab-item" id="stadiumTab">⚽<br>スタジアム</div>
     <div class="tab-item" id="generalTab">🏪<br>一般店舗</div>
     <div class="tab-item tab-disabled" id="routeTab">🧭<br>経路検索</div>
-    <div class="tab-item" id="stadiumTab">⚽<br>スタジアム</div>
     <div class="tab-item tab-disabled">⭐<br>保存</div>
   </div>
 
