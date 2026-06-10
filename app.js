@@ -77,25 +77,15 @@ window.initMap = function () {
   /* ── ①② 出発地管理 ── */
   let originData = null; // { lat, lng, name }
 
-  const setOriginChk    = document.getElementById("setOriginChk");
-  const clearOriginBtn  = document.getElementById("clearOriginBtn");
+  const setOriginChk = document.getElementById("setOriginChk");
 
-  // 出発地をセット（外部からも呼べるよう window に公開）
+  // 出発地をセット（現在地取得時などに外部から呼ぶ）
   window.setOrigin = function(data) {
     originData = data;
-    clearOriginBtn.style.display = "block";
-    // チェックボックスをONに
     if (setOriginChk) setOriginChk.checked = true;
   };
 
-  // ② 出発地クリア
-  clearOriginBtn.addEventListener("click", () => {
-    originData = null;
-    clearOriginBtn.style.display = "none";
-    if (setOriginChk) setOriginChk.checked = false;
-  });
-
-  // カードの「出発地にセット」チェックボックス
+  // チェックボックスON→出発地セット、OFF→クリア
   setOriginChk.addEventListener("change", () => {
     if (setOriginChk.checked && currentDestination) {
       originData = {
@@ -103,10 +93,8 @@ window.initMap = function () {
         lng:  currentDestination.lng,
         name: currentDestination.name
       };
-      clearOriginBtn.style.display = "block";
     } else {
       originData = null;
-      clearOriginBtn.style.display = "none";
     }
   });
 
@@ -123,7 +111,6 @@ window.initMap = function () {
     card.style.display = "none";
     setRouteTabEnabled(false);
     currentDestination = null;
-    // チェックボックスをリセット（出発地データは保持）
     if (setOriginChk) setOriginChk.checked = false;
   }
 
