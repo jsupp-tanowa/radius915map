@@ -317,12 +317,3 @@ button {
   accent-color: #4285F4;
   cursor: pointer;
 }
-
-.clear-origin-btn {
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: #e0e0e0;
-  color: #555;
-  box-shadow: none;
-}
