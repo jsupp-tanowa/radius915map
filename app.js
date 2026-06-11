@@ -361,7 +361,7 @@ window.initMap = function () {
 
   /* ── データ読込（リトライ付き） ── */
   function loadShops(retry = 0) {
-    db.collection("shops").get({ source: "server" }).then(snapshot => {
+    db.collection("shops").get().then(snapshot => {
       allShops = [];
       snapshot.forEach(doc => allShops.push(doc.data()));
       refreshShopMarkers();
@@ -372,7 +372,7 @@ window.initMap = function () {
   }
 
   function loadStadiums(retry = 0) {
-    db.collection("stadiums").get({ source: "server" }).then(snapshot => {
+    db.collection("stadiums").get().then(snapshot => {
       allStadiums = [];
       snapshot.forEach(doc => allStadiums.push(doc.data()));
       refreshStadiumMarkers();
