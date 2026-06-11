@@ -1,6 +1,6 @@
 /* Firebase */
 const firebaseConfig = {
-  apiKey: "AIzaSyCyzwwPiCcUCICxv6kcx7ZlaNkMa46hcVA",
+  apiKey: "AIzaSyCyzwwPiCcUCICxv6kcx7ZlaNkMa46hcVA",,
   authDomain: "japan-football-supporters-hub.firebaseapp.com",
   projectId: "japan-football-supporters-hub",
   storageBucket: "japan-football-supporters-hub.firebasestorage.app",
@@ -359,22 +359,36 @@ window.initMap = function () {
     refreshAllMarkers();
   });
 
-  /* ── データ読込 ── */
-  function loadShops() {
-    db.collection("shops").get().then(snapshot => {
+  /* ── データ読込（リトライ付き） ── */
+  function loadShops(retry = 0) {
+    db.collection("shops").get({ source: "server" }).then(snapshot => {
       allShops = [];
       snapshot.forEach(doc => allShops.push(doc.data()));
       refreshShopMarkers();
+    }).catch(err => {
+      console.warn("shops 読込エラー:", err);
+      if (retry < 3) setTimeout(() => loadShops(retry + 1), 2000 * (retry + 1));
     });
   }
 
-  function loadStadiums() {
-    db.collection("stadiums").get().then(snapshot => {
+  function loadStadiums(retry = 0) {
+    db.collection("stadiums").get({ source: "server" }).then(snapshot => {
       allStadiums = [];
       snapshot.forEach(doc => allStadiums.push(doc.data()));
       refreshStadiumMarkers();
+    }).catch(err => {
+      console.warn("stadiums 読込エラー:", err);
+      if (retry < 3) setTimeout(() => loadStadiums(retry + 1), 2000 * (retry + 1));
     });
   }
+
+  /* ── Page Visibility API：タブ復帰時に再読込 ── */
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      loadShops();
+      loadStadiums();
+    }
+  });
 
   /* ── カード閉じる ── */
   document.getElementById("closeCardBtn").addEventListener("click", closeCard);
